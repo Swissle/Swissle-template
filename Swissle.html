@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>SWISSLE MOD MENU</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        
+        body {
+            background: transparent;
+            overflow: hidden;
+            width: 330px;
+            height: 350px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .swissle-menu {
+            width: 330px;
+            height: 350px;
+            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 50%, #0c0c0c 100%);
+            border: 1.5px solid;
+            border-image: linear-gradient(135deg, #00ff88, #0088ff, #ff0088) 1;
+            border-radius: 16px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.1);
+        }
+        
+        .swissle-menu::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(135deg, #00ff88, #0088ff, #ff0088, #00ff88);
+            border-radius: 18px;
+            z-index: -1;
+            animation: rotate 3s linear infinite;
+            opacity: 0.5;
+        }
+        
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .header {
+            height: 50px;
+            background: linear-gradient(90deg, rgba(0, 255, 136, 0.1), rgba(0, 136, 255, 0.1));
+            border-bottom: 1px solid rgba(0, 255, 136, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            position: relative;
+        }
+        
+        .title {
+            color: #00ff88;
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+        }
+        
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #00ff88;
+            box-shadow: 0 0 10px #00ff88;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .content-area {
+            height: 250px;
+            padding: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .tab-container {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 8px 5px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 255, 136, 0.2);
+            border-radius: 8px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 10px;
+            font-weight: 600;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .tab.active {
+            background: linear-gradient(135deg, #00ff88, #0088ff);
+            color: #000;
+            border-color: #00ff88;
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
+        }
+        
+        .scroll-content {
+            height: 180px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+        
+        .scroll-content::-webkit-scrollbar {
+            width: 3px;
+        }
+        
+        .scroll-content::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 2px;
+        }
+        
+        .scroll-content::-webkit-scrollbar-thumb {
+            background: linear-gradient(#00ff88, #0088ff);
+            border-radius: 2px;
+        }
+        
+        .option-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 12px;
+            margin-bottom: 8px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .option-item:hover {
+            border-color: rgba(0, 255, 136, 0.5);
+            background: rgba(0, 255, 136, 0.05);
+        }
+        
+        .option-name {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            width: 40px;
+            height: 20px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 1px;
+            bottom: 1px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        input:checked + .toggle-slider {
+            background: linear-gradient(135deg, #00ff88, #0088ff);
+            border-color: #00ff88;
+        }
+        
+        input:checked + .toggle-slider:before {
+            transform: translateX(20px);
+            background: #ffffff;
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+        }
+        
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+        }
+        
+        .slider {
+            flex: 1;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 14px;
+            height: 14px;
+            background: linear-gradient(135deg, #00ff88, #0088ff);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+            border: 2px solid #ffffff;
+        }
+        
+        .slider-value {
+            color: #00ff88;
+            font-size: 10px;
+            font-weight: 700;
+            min-width: 25px;
+            text-align: center;
+            text-shadow: 0 0 5px rgba(0, 255, 136, 0.5);
+        }
+        
+        .footer {
+            height: 50px;
+            background: linear-gradient(90deg, rgba(0, 136, 255, 0.1), rgba(255, 0, 136, 0.1));
+            border-top: 1px solid rgba(0, 136, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+        }
+        
+        .quick-action {
+            padding: 8px 15px;
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.2), rgba(0, 136, 255, 0.2));
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            border-radius: 8px;
+            color: #00ff88;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .quick-action:hover {
+            background: linear-gradient(135deg, #00ff88, #0088ff);
+            color: #000;
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
+        }
+        
+        .stats {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .stat-value {
+            color: #00ff88;
+            font-size: 11px;
+            font-weight: 700;
+            text-shadow: 0 0 5px rgba(0, 255, 136, 0.5);
+        }
+        
+        .stat-label {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 9px;
+        }
+        
+        .notification {
+            position: absolute;
+            top: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.9), rgba(0, 136, 255, 0.9));
+            color: #000;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 700;
+            z-index: 1000;
+            animation: slideDown 0.3s ease, fadeOut 0.3s ease 2.7s forwards;
+            box-shadow: 0 5px 15px rgba(0, 255, 136, 0.3);
+        }
+        
+        @keyframes slideDown {
+            from { transform: translateX(-50%) translateY(-20px); opacity: 0; }
+            to { transform: translateX(-50%) translateY(0); opacity: 1; }
+        }
+        
+        @keyframes fadeOut {
+            to { opacity: 0; }
+        }
+        
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: #00ff88;
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="swissle-menu" id="swissleMenu">
+        <div class="header">
+            <div class="title">SWISSLE</div>
+            <div class="status-indicator"></div>
+        </div>
+        
+        <div class="content-area">
+            <div class="tab-container">
+                <div class="tab active" onclick="switchTab(0)">PLAYER</div>
+                <div class="tab" onclick="switchTab(1)">VISUAL</div>
+                <div class="tab" onclick="switchTab(2)">WEAPON</div>
+                <div class="tab" onclick="switchTab(3)">WORLD</div>
+            </div>
+            
+            <div class="scroll-content" id="scrollContent">
+                <!-- Content will be populated by JavaScript -->
+            </div>
+        </div>
+        
+        <div class="footer">
+            <button class="quick-action" onclick="executeAll()">EXECUTE ALL</button>
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="activeCount">0</div>
+                    <div class="stat-label">ACTIVE</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="fpsCounter">60</div>
+                    <div class="stat-label">FPS</div>
+                </div>
+            </div>
+            <button class="quick-action" onclick="resetAll()">RESET</button>
+        </div>
+    </div>
+
+    <script>
+        // Advanced State Management
+        const Swissle = {
+            currentTab: 0,
+            activeFeatures: new Set(),
+            settings: {
+                player: [
+                    { id: 'godmode', name: 'God Mode', type: 'toggle', value: false },
+                    { id: 'speed', name: 'Speed Boost', type: 'toggle', value: false },
+                    { id: 'jump', name: 'High Jump', type: 'slider', value: 1, min: 1, max: 5, step: 0.5 },
+                    { id: 'invisible', name: 'Invisible', type: 'toggle', value: false },
+                    { id: 'noclip', name: 'No Clip', type: 'toggle', value: false },
+                    { id: 'stamina', name: 'Unlimited Stamina', type: 'toggle', value: false }
+                ],
+                visual: [
+                    { id: 'esp', name: 'ESP', type: 'toggle', value: false },
+                    { id: 'brightness', name: 'Brightness', type: 'slider', value: 1, min: 0.1, max: 3, step: 0.1 },
+                    { id: 'fov', name: 'FOV', type: 'slider', value: 60, min: 60, max: 120, step: 5 },
+                    { id: 'xray', name: 'X-Ray', type: 'toggle', value: false },
+                    { id: 'nightvision', name: 'Night Vision', type: 'toggle', value: false },
+                    { id: 'chams', name: 'Chams', type: 'toggle', value: false }
+                ],
+                weapon: [
+                    { id: 'damage', name: 'Damage Multiplier', type: 'slider', value: 1, min: 1, max: 10, step: 0.5 },
+                    { id: 'ammo', name: 'Unlimited Ammo', type: 'toggle', value: false },
+                    { id: 'recoil', name: 'No Recoil', type: 'toggle', value: false },
+                    { id: 'rapidfire', name: 'Rapid Fire', type: 'toggle', value: false },
+                    { id: 'range', name: 'Increased Range', type: 'toggle', value: false },
+                    { id: 'penetration', name: 'Wall Penetration', type: 'toggle', value: false }
+                ],
+                world: [
+                    { id: 'gravity', name: 'Gravity', type: 'slider', value: 1, min: 0, max: 2, step: 0.1 },
+                    { id: 'time', name: 'Time Scale', type: 'slider', value: 1, min: 0.1, max: 3, step: 0.1 },
+                    { id: 'weather', name: 'Weather Control', type: 'toggle', value: false },
+                    { id: 'spawn', name: 'Spawn Control', type: 'toggle', value: false },
+                    { id: 'physics', name: 'Physics Mod', type: 'toggle', value: false },
+                    { id: 'ai', name: 'AI Control', type: 'toggle', value: false }
+                ]
+            }
+        };
+
+        // Initialize Advanced Menu
+        function initSwissle() {
+            renderCurrentTab();
+            startFPSCounter();
+            createParticles();
+            updateActiveCount();
+            showNotification('SWISSLE MOD MENU LOADED');
+        }
+
+        // Tab System
+        function switchTab(tabIndex) {
+            Swissle.currentTab = tabIndex;
+            document.querySelectorAll('.tab').forEach((tab, index) => {
+                tab.classList.toggle('active', index === tabIndex);
+            });
+            renderCurrentTab();
+            createParticles();
+        }
+
+        // Advanced Rendering
+        function renderCurrentTab() {
+            const content = document.getElementById('scrollContent');
+            const currentSettings = Swissle.settings[Object.keys(Swissle.settings)[Swissle.currentTab]];
+            
+            content.innerHTML = currentSettings.map(setting => {
+                if (setting.type === 'toggle') {
+                    return `
+                        <div class="option-item">
+                            <div class="option-name">${setting.name}</div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" ${setting.value ? 'checked' : ''} 
+                                       onchange="toggleFeature('${setting.id}', this.checked)">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    `;
+                } else if (setting.type === 'slider') {
+                    return `
+                        <div class="option-item">
+                            <div class="option-name">${setting.name}</div>
+                            <div class="slider-container">
+                                <input type="range" class="slider" 
+                                       min="${setting.min}" max="${setting.max}" step="${setting.step}" 
+                                       value="${setting.value}"
+                                       oninput="updateSlider('${setting.id}', this.value)">
+                                <span class="slider-value">${setting.value}</span>
+                            </div>
+                        </div>
+                    `;
+                }
+            }).join('');
+        }
+
+        // Feature Management
+        function toggleFeature(id, enabled) {
+            const allSettings = Object.values(Swissle.settings).flat();
+            const setting = allSettings.find(s => s.id === id);
+            
+            if (setting) {
+                setting.value = enabled;
+                if (enabled) {
+                    Swissle.activeFeatures.add(id);
+                    createParticles();
+                } else {
+                    Swissle.activeFeatures.delete(id);
+                }
+                
+                updateActiveCount();
+                showNotification(`${setting.name} ${enabled ? 'ACTIVATED' : 'DEACTIVATED'}`);
+                
+                // Execute feature logic
+                executeFeature(id, enabled, setting.value);
+            }
+        }
+
+        function updateSlider(id, value) {
+            const allSettings = Object.values(Swissle.settings).flat();
+            const setting = allSettings.find(s => s.id === id);
+            
+            if (setting) {
+                setting.value = parseFloat(value);
+                document.querySelector(`input[oninput*="${id}"]`).nextElementSibling.textContent = value;
+                
+                // Update feature in real-time
+                executeFeature(id, true, setting.value);
+            }
+        }
+
+        // Feature Execution
+        function executeFeature(id, enabled, value) {
+            // This is where you'd integrate with H5GG
+            try {
+                switch(id) {
+                    case 'godmode':
+                        if (typeof h5gg !== 'undefined') {
+                            h5gg.setValue("0x12345678", enabled ? "1" : "0", "I32");
+                        }
+                        break;
+                    case 'speed':
+                        if (typeof h5gg !== 'undefined') {
+                            h5gg.setValue("0x12345679", enabled ? "10.0" : "1.0", "F32");
+                        }
+                        break;
+                    case 'esp':
+                        // ESP implementation
+                        break;
+                    // Add more feature implementations...
+                }
+            } catch(e) {
+                // Silent fail for demo
+            }
+        }
+
+        // Quick Actions
+        function executeAll() {
+            Object.values(Swissle.settings).flat().forEach(setting => {
+                if (setting.type === 'toggle' && !setting.value) {
+                    toggleFeature(setting.id, true);
+                }
+            });
+            showNotification('ALL FEATURES ACTIVATED');
+            createParticles();
+        }
+
+        function resetAll() {
+            Object.values(Swissle.settings).flat().forEach(setting => {
+                if (setting.value) {
+                    if (setting.type === 'toggle') {
+                        toggleFeature(setting.id, false);
+                    } else {
+                        setting.value = setting.min || 1;
+                    }
+                }
+            });
+            renderCurrentTab();
+            showNotification('ALL FEATURES RESET');
+        }
+
+        // Visual Effects
+        function createParticles() {
+            const menu = document.getElementById('swissleMenu');
+            for (let i = 0; i < 5; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 330 + 'px';
+                particle.style.top = '350px';
+                particle.style.animation = `float ${1 + Math.random() * 2}s ease-out forwards`;
+                menu.appendChild(particle);
+                
+                setTimeout(() => particle.remove(), 3000);
+            }
+        }
+
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                if (notification.parentNode) notification.remove();
+            }, 3000);
+        }
+
+        // Performance Monitoring
+        function startFPSCounter() {
+            let frameCount = 0;
+            let lastTime = performance.now();
+            
+            function updateFPS() {
+                frameCount++;
+                const currentTime = performance.now();
+                
+                if (currentTime - lastTime >= 1000) {
+                    document.getElementById('fpsCounter').textContent = frameCount;
+                    frameCount = 0;
+                    lastTime = currentTime;
+                }
+                
+                requestAnimationFrame(updateFPS);
+            }
+            updateFPS();
+        }
+
+        function updateActiveCount() {
+            document.getElementById('activeCount').textContent = Swissle.activeFeatures.size;
+        }
+
+        // Initialize
+        setTimeout(initSwissle, 100);
+    </script>
+</body>
+</html>
